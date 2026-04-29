@@ -17,11 +17,12 @@ async function seed() {
     Class.deleteMany(), Subject.deleteMany(), Attendance.deleteMany(), Settings.deleteMany(),
   ]);
 
-  // Users
-  const adminUser   = await User.create({ name: 'Admin User',    email: 'admin@school.com',    password: 'admin123',   role: 'admin' });
-  const teacherUser = await User.create({ name: 'John Smith',    email: 'teacher@school.com',  password: 'teacher123', role: 'teacher' });
-  const teacher2User= await User.create({ name: 'Jane Doe',      email: 'teacher2@school.com', password: 'teacher123', role: 'teacher' });
-  const studentUser = await User.create({ name: 'Alice Johnson', email: 'student@school.com',  password: 'student123', role: 'student' });
+  // Users — use save() to ensure pre('save') bcrypt hook fires
+  const makeUser = async (data) => { const u = new User(data); await u.save(); return u; };
+  const adminUser    = await makeUser({ name: 'Admin User',    email: 'admin@school.com',    password: 'admin123',   role: 'admin' });
+  const teacherUser  = await makeUser({ name: 'John Smith',    email: 'teacher@school.com',  password: 'teacher123', role: 'teacher' });
+  const teacher2User = await makeUser({ name: 'Jane Doe',      email: 'teacher2@school.com', password: 'teacher123', role: 'teacher' });
+  const studentUser  = await makeUser({ name: 'Alice Johnson', email: 'student@school.com',  password: 'student123', role: 'student' });
 
   // Classes
   const [c1, c2, c3] = await Class.insertMany([
