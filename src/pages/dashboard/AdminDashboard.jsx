@@ -1,8 +1,13 @@
+import { useEffect } from 'react';
 import { useData } from '../../context/DataContext';
 import { StatCard, Table, Badge } from '../../components/UI';
 
 export default function AdminDashboard() {
-  const { students, teachers, classes, attendance } = useData();
+  const { students, teachers, classes, attendance, fetchAttendance } = useData();
+
+  useEffect(() => {
+    fetchAttendance({ date: new Date().toISOString().split('T')[0] });
+  }, []);
 
   const today = new Date().toISOString().split('T')[0];
   const todayRecords = attendance.filter(r => r.date === today);
@@ -21,14 +26,15 @@ export default function AdminDashboard() {
         <StatCard label="Total Students" value={students.length} icon="👨🎓" color="indigo" />
         <StatCard label="Total Teachers" value={teachers.length} icon="👨🏫" color="blue" />
         <StatCard label="Classes" value={classes.length} icon="🏫" color="green" />
-        <StatCard label="Today's Attendance" value={`${overallPct}%`} icon="📋" color={overallPct >= 75 ? 'green' : 'red'} sub={`${presentToday}/${totalToday} present`} />
+        <StatCard label="Today's Attendance" value={`${overallPct}%`} icon="📋"
+          color={overallPct >= 75 ? 'green' : 'red'} sub={`${presentToday}/${totalToday} present`} />
       </div>
       <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-5">
         <h2 className="font-semibold text-white mb-4">Recent Attendance Activity</h2>
-        <Table headers={['Student ID', 'Date', 'Status']}>
+        <Table headers={['Student', 'Date', 'Status']}>
           {recent.map(r => (
-            <tr key={r.id} className="hover:bg-white/5">
-              <td className="px-4 py-3 text-white/70">Student #{r.studentId}</td>
+            <tr key={r._id} className="hover:bg-white/5">
+              <td className="px-4 py-3 text-white/70">{r.studentId?.name || '—'}</td>
               <td className="px-4 py-3 text-white/70">{r.date}</td>
               <td className="px-4 py-3"><Badge status={r.status} /></td>
             </tr>

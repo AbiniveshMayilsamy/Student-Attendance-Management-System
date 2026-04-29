@@ -1,16 +1,65 @@
-# React + Vite
+# 🎓 SAMS — Student Attendance Management System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack attendance management system built with **React + Vite**, **Node.js + Express**, and **MongoDB**.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+| Layer    | Tech                                      |
+|----------|-------------------------------------------|
+| Frontend | React 19, Vite, Tailwind CSS v4, Recharts |
+| 3D BG    | Three.js, React Three Fiber, Drei         |
+| Backend  | Node.js, Express, Mongoose                |
+| Database | MongoDB                                   |
+| Auth     | JWT + bcryptjs                            |
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Role-based auth — Admin, Teacher, Student
+- 3D animated starfield background with student-themed objects
+- Student & Teacher management (CRUD)
+- Class & Subject management
+- Mark attendance (present / absent / late) per class/subject/date
+- Attendance records with filters
+- Reports & Analytics with charts + low attendance alerts
+- CSV export
+- System settings
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Prerequisites
+- Node.js 18+
+- MongoDB running locally on port 27017
+
+### 1. Clone & install
+
+```bash
+git clone https://github.com/AbiniveshMayilsamy/Student-Attendance-Management-System.git
+cd Student-Attendance-Management-System
+npm install
+```
+
+### 2. Setup backend
+
+```bash
+cd backend
+npm install
+cp .env.example .env   # edit MONGO_URI and JWT_SECRET
+npm run seed           # seed demo data into MongoDB
+npm run dev            # starts on http://localhost:5000
+```
+
+### 3. Setup frontend
+
+```bash
+# from root
+cp .env.example .env
+npm run dev            # starts on http://localhost:5173
+```
+
+## Demo Accounts
+
+| Role    | Email                  | Password    |
+|---------|------------------------|-------------|
+| Admin   | admin@school.com       | admin123    |
+| Teacher | teacher@school.com     | teacher123  |
+| Student | student@school.com     | student123  |

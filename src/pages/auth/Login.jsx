@@ -13,11 +13,10 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     setError('');
-    await new Promise(r => setTimeout(r, 400));
-    const ok = login(form.email, form.password);
+    const { ok, message } = await login(form.email, form.password);
     setLoading(false);
     if (ok) navigate('/dashboard');
-    else setError('Invalid email or password');
+    else setError(message || 'Invalid email or password');
   };
 
   const demoLogin = (email, password) => setForm({ email, password });

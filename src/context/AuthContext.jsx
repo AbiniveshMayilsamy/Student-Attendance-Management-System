@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from 'react';
-import { USERS } from '../data/mockData';
+import { api } from '../api';
 
 const AuthContext = createContext(null);
 
@@ -9,21 +9,29 @@ export function AuthProvider({ children }) {
     return saved ? JSON.parse(saved) : null;
   });
 
-  const login = (email, password) => {
-    const found = USERS.find(u => u.email === email && u.password === password);
-    if (!found) return false;
-    const { password: _, ...safe } = found;
-    setUser(safe);
-    localStorage.setItem('sams_user', JSON.stringify(safe));
-    return true;
+  const login = async (email, password) => {
+    try {
+      const { token, user } = await api.login(email, password);
+      localStorage.setItem('sams_token', token);
+      localStorage.setItem('sams_user', JSON.stringify(user));
+      setUser(user);
+      return { ok: true };
+    } catch (err) {
+      return { ok: false, message: err.message };
+    }
   };
 
   const logout = () => {
     setUser(null);
+    localStorage.removeItem('sams_token');
     localStorage.removeItem('sams_user');
   };
 
-  return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export const useAuth = () => useContext(AuthContext);
