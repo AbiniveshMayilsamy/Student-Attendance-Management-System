@@ -8,55 +8,58 @@ const headers = (extra = {}) => ({
   ...extra,
 });
 
-const handle = async (res) => {
+const handle = async (promise) => {
+  const res = await promise;
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || 'Request failed');
   return data;
 };
 
+const req = (url, options = {}) => handle(fetch(`${BASE}${url}`, { ...options, headers: headers(options.headers) }));
+const get  = (url)        => req(url);
+const post = (url, body)  => req(url, { method: 'POST',   body: JSON.stringify(body) });
+const put  = (url, body)  => req(url, { method: 'PUT',    body: JSON.stringify(body) });
+const del  = (url)        => req(url, { method: 'DELETE' });
+
 export const api = {
   // Auth
-  login: (email, password) =>
-    handle(fetch(`${BASE}/auth/login`, { method: 'POST', headers: headers(), body: JSON.stringify({ email, password }) })),
-  me: () =>
-    handle(fetch(`${BASE}/auth/me`, { headers: headers() })),
+  login: (email, password) => post('/auth/login', { email, password }),
+  me:    ()                => get('/auth/me'),
 
   // Students
-  getStudents: () => handle(fetch(`${BASE}/students`, { headers: headers() })),
-  getStudent:  (id) => handle(fetch(`${BASE}/students/${id}`, { headers: headers() })),
-  addStudent:  (data) => handle(fetch(`${BASE}/students`, { method: 'POST', headers: headers(), body: JSON.stringify(data) })),
-  updateStudent: (id, data) => handle(fetch(`${BASE}/students/${id}`, { method: 'PUT', headers: headers(), body: JSON.stringify(data) })),
-  deleteStudent: (id) => handle(fetch(`${BASE}/students/${id}`, { method: 'DELETE', headers: headers() })),
+  getStudents:   ()        => get('/students'),
+  getStudent:    (id)      => get(`/students/${id}`),
+  addStudent:    (data)    => post('/students', data),
+  updateStudent: (id, data)=> put(`/students/${id}`, data),
+  deleteStudent: (id)      => del(`/students/${id}`),
 
   // Teachers
-  getTeachers: () => handle(fetch(`${BASE}/teachers`, { headers: headers() })),
-  addTeacher:  (data) => handle(fetch(`${BASE}/teachers`, { method: 'POST', headers: headers(), body: JSON.stringify(data) })),
-  updateTeacher: (id, data) => handle(fetch(`${BASE}/teachers/${id}`, { method: 'PUT', headers: headers(), body: JSON.stringify(data) })),
-  deleteTeacher: (id) => handle(fetch(`${BASE}/teachers/${id}`, { method: 'DELETE', headers: headers() })),
+  getTeachers:   ()        => get('/teachers'),
+  addTeacher:    (data)    => post('/teachers', data),
+  updateTeacher: (id, data)=> put(`/teachers/${id}`, data),
+  deleteTeacher: (id)      => del(`/teachers/${id}`),
 
   // Classes
-  getClasses: () => handle(fetch(`${BASE}/classes`, { headers: headers() })),
-  addClass:   (data) => handle(fetch(`${BASE}/classes`, { method: 'POST', headers: headers(), body: JSON.stringify(data) })),
-  updateClass: (id, data) => handle(fetch(`${BASE}/classes/${id}`, { method: 'PUT', headers: headers(), body: JSON.stringify(data) })),
-  deleteClass: (id) => handle(fetch(`${BASE}/classes/${id}`, { method: 'DELETE', headers: headers() })),
+  getClasses:   ()         => get('/classes'),
+  addClass:     (data)     => post('/classes', data),
+  updateClass:  (id, data) => put(`/classes/${id}`, data),
+  deleteClass:  (id)       => del(`/classes/${id}`),
 
   // Subjects
-  getSubjects: () => handle(fetch(`${BASE}/subjects`, { headers: headers() })),
-  addSubject:  (data) => handle(fetch(`${BASE}/subjects`, { method: 'POST', headers: headers(), body: JSON.stringify(data) })),
-  updateSubject: (id, data) => handle(fetch(`${BASE}/subjects/${id}`, { method: 'PUT', headers: headers(), body: JSON.stringify(data) })),
-  deleteSubject: (id) => handle(fetch(`${BASE}/subjects/${id}`, { method: 'DELETE', headers: headers() })),
+  getSubjects:   ()        => get('/subjects'),
+  addSubject:    (data)    => post('/subjects', data),
+  updateSubject: (id, data)=> put(`/subjects/${id}`, data),
+  deleteSubject: (id)      => del(`/subjects/${id}`),
 
   // Attendance
   getAttendance: (params = {}) => {
     const q = new URLSearchParams(params).toString();
-    return handle(fetch(`${BASE}/attendance${q ? '?' + q : ''}`, { headers: headers() }));
+    return get(`/attendance${q ? '?' + q : ''}`);
   },
-  saveAttendance: (records) =>
-    handle(fetch(`${BASE}/attendance/bulk`, { method: 'POST', headers: headers(), body: JSON.stringify({ records }) })),
-  updateAttendance: (id, data) =>
-    handle(fetch(`${BASE}/attendance/${id}`, { method: 'PUT', headers: headers(), body: JSON.stringify(data) })),
+  saveAttendance:   (records)  => post('/attendance/bulk', { records }),
+  updateAttendance: (id, data) => put(`/attendance/${id}`, data),
 
   // Settings
-  getSettings: () => handle(fetch(`${BASE}/settings`, { headers: headers() })),
-  updateSettings: (data) => handle(fetch(`${BASE}/settings`, { method: 'PUT', headers: headers(), body: JSON.stringify(data) })),
+  getSettings:    ()     => get('/settings'),
+  updateSettings: (data) => put('/settings', data),
 };
